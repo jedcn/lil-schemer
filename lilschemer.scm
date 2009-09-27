@@ -291,4 +291,40 @@
        (add1 (olength (cdr lat)))))))
 ;;(olength (quote(a b c)))
 
+;; (pick n lat)
+;;
+;; Given a number, n, and a list of atoms, lat, return the nth item in
+;; the list. When n is 1, return the first item.
+;;
+;; Chapter 4, p. 76
+;;
+(define pick
+  (lambda (n lat)
+    (cond
+     ((zero? (sub1 n)) (car lat))
+     (else
+      (pick (sub1 n) (cdr lat))))))
+
+;;(pick 3 (quote (a b c)))
+;;(pick 1 (quote (a b c)))
+
+;; (rempick n lat)
+;;
+;; Given a number, n, and a list of atoms, lat, remove the nth item in
+;; the list. When n is 1, remove the first item.
+;;
+;; Chapter 4, p. 76 
+;;
+(define rempick
+  (lambda (n lat)
+    (cond
+     ((zero? (sub1 n)) (cdr lat))
+     (else
+      (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+
+;;(rempick 1 (quote (a b c d)))
+;;(rempick 2 (quote (a b c d)))
+;;(rempick 3 (quote (a b c d)))
+;;(rempick 4 (quote (a b c d)))
+
 
