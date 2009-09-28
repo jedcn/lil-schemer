@@ -327,4 +327,118 @@
 ;;(rempick 3 (quote (a b c d)))
 ;;(rempick 4 (quote (a b c d)))
 
+;; (no-nums lat)
+;;
+;; Given a list of atoms, lat, return a new list of atoms based on lat
+;; with all of the atoms removed.
+;;
+;; Chapter 4, p. 77
+;;
+(define no-nums
+  (lambda (lat)
+    (cond
+     ((null? lat) (quote ()))
+     ((number? (car lat)) (no-nums (cdr lat)))
+     (else
+      (cons (car lat) (no-nums (cdr lat)))))))
 
+;;(no-nums (quote (a 1 b 2 c 3 d 4 e 5)))
+;;(no-nums (quote (a b c d e)))
+;;(no-nums (quote (1 2 3 4 5)))
+
+;; (all-nums lat)
+;;
+;; Given a list of atoms, lat, return a tuple containing all of the
+;; numbers in lat
+;;
+;; Chapter 4, p. 77
+;;
+(define all-nums
+  (lambda (lat)
+    (cond
+     ((null? lat) (quote ()))
+     ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))
+     (else
+      (all-nums (cdr lat))))))
+
+(all-nums (quote (a 1 b 2 c 3 d 4 e 5)))
+(all-nums (quote (a b c d e)))
+(all-nums (quote (1 2 3 4 5)))
+
+;; (eqan? a1 a2)
+;;
+;; Given two atoms (numeric or otherwise) return #t if they are
+;; equal, #f otherwise.
+;;
+;; Similar to =, but works with strings
+;; Similar to eq?, but works with numbers.
+;;
+;; Chapter 4, p. 78
+;;
+(define eqan?
+  (lambda (a1 a2)
+    (cond
+     ((and (number? a1) (number? a2)) (= a1 a2))
+     ((or (number? a1) (number? a2)) #f)
+     (else
+      (eq? a1 a2)))))
+
+;;(eqan? 1 1)
+;;(eqan? 1 2)
+;;(eqan? (quote a) (quote a))
+;;(eqan? (quote a) (quote b))
+;;(eqan? (quote a) 1)
+
+;; (occur a lat)
+;;
+;; Given an atom, a, and a list of atoms, lat, return the number of
+;; times that a occurs in lat.
+;;
+;; Chapter 4, p. 78
+;;
+(define occur
+  (lambda (a lat)
+    (cond
+     ((null? lat) 0)
+     ((eqan? a (car lat)) (add1 (occur a (cdr lat))))
+     (else
+      (occur a (cdr lat))))))
+
+;;(occur 1 (quote (a 1 b 1 b 1 c)
+;;(occur (quote b) (quote (a 1 b 1 b 1 c)))
+
+;; (one? n)
+;;
+;; Returns #t if n is the number 1
+;;
+;; Chapter 4, p. 79
+;;
+(define one?
+  (lambda (n)
+    (cond
+     ((zero? n) #f)
+     ((zero? (sub1 n)) #t)
+     (else #f))))
+
+;;(one? 0)
+;;(one? 1)
+;;(one? 2)
+
+;; (rempick n lat)
+;;
+;; rempick, but using one?
+;;
+;; Chapter 4, p. 79
+;;
+(define rempick
+  (lambda (n lat)
+    (cond
+     ((null? lat) (quote ()))
+     ((one? n) (cdr lat))
+     (else
+      (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+
+;;(rempick 1 (quote (a b c d)))
+;;(rempick 2 (quote (a b c d)))
+;;(rempick 3 (quote (a b c d)))
+;;(rempick 4 (quote (a b c d)))
