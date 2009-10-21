@@ -1,33 +1,46 @@
 ;; The Little Schemer
+;;
+;; Reading the book, following along with emacs, mzscheme, and Ubuntu.
 
-;; atom?
+;;
+;; (atom? sexp)
 ;;
 ;; Determine whether a sexp is an atom or not
+;;
 ;; Chapter 1, p. 10
+;;
 (define atom?
   (lambda (x)
     (and (not (pair? x)) (not (null? x)))))
 
-;; lat?
 ;;
-;; Determine whether a sexp is a list containing only atoms
+;; (lat? list)
+;;
+;; Determine whether a list is a list containing only atoms
+;;
 ;; Chapter 2, p 16
+;;
 (define lat?
   (lambda (l)
     (cond
-      ((null? l) true)
+      ((null? l) #t)
       ((atom? (car l)) (lat? (cdr l)))
-      (else false))))
+      (else #f))))
+;;(lat? (quote (a b c)))
+;;(lat? (quote ((a b) 1 2)))
 
-;; member?
 ;;
-;; Determine whether the atom a is present in the list of atoms lat
+;; (member? a lat)
+;;
+;; Determine whether an atom, a, is present in the list of atoms, lat
+;;
 ;; Chapter 2, p 16
+;;
 (define member?
   (lambda (a lat)
     (cond
-      ((null? lat) false)
-      ((eq? a (car lat)) true)
+      ((null? lat) #f)
+      ((eq? a (car lat)) #t)
       (else
        (member? a (cdr lat))))))
 ;;(member? 'a '(a b c))
@@ -35,10 +48,14 @@
 ;;(member? 'c '(a b c))
 ;;(member? 'd '(a b c))
 
-;; rember
-;; Chapter 3, p. 34
+;;
+;; (rember a lat)
+;;
 ;; Return a list of atoms that matches lat, except without the first occurrence
 ;; of the atom a in lat
+;;
+;; Chapter 3, p. 34
+;;
 (define rember
   (lambda (a lat)
     (cond
@@ -46,29 +63,37 @@
       ((eq? a (car lat)) (cdr lat))
       (else
        (cons (car lat) (rember a (cdr lat)))))))
-
 ;;(rember 'a '(a b c))
 ;;(rember 'b '(a b c))
 ;;(rember 'c '(a b c))
 ;;(rember 'd '(a b c))
 
-;; firsts
-;; Return the first element of each list in lol, a list of lists.
+;;
+;; (firsts lol)
+;;
+;; Given a list containing other lists, lol, return the first element
+;; of each list in lol, a list of lists.
+;;
 ;; Chapter 3, p. 44
+;;
 (define firsts
   (lambda (lol)
     (cond
       ((null? lol) (quote()))
       (else
        (cons (car (car lol)) (firsts (cdr lol)))))))
-
 ;;(firsts (quote((a b) (c d) (e f))))
 ;;(firsts (quote((a b) (c d e) (f) (g) (h i j))))
 
-;; insertR
-;; Return the list of atoms, lat, with new inserted to the right of the first
-;; occurrence of old
+;;
+;; (insertR new old lat)
+;;
+;; Given a list of atoms lat, a new atom, new, and an old atom, old,
+;; return a new list of atoms that matches lat except with new
+;; inserted to the right of the first occurrence of old
+;;
 ;; Chapter 3, p. 47
+;;
 (define insertR
   (lambda (new old lat)
     (cond
@@ -78,10 +103,15 @@
        (cons (car lat) (insertR new old (cdr lat)))))))
 ;;(insertR (quote jalapeno) (quote and) (quote (tacos tamales and salsa)))
 
-;; insertL
-;; Return the list of atoms, lat, with new inserted to the left of the first
-;; occurrence of old
-;; Chapter 3, p. 51 
+;;
+;; (insertL new old lat)
+;;
+;; Given a list of atoms lat, a new atom, new, and an old atom, old,
+;; return a new list of atoms that matches lat except with new
+;; inserted to the left of the first occurrence of old
+;;
+;; Chapter 3, p. 51
+;;
 (define insertL
   (lambda (new old lat)
     (cond
@@ -92,10 +122,15 @@
 ;;(insertL (quote a) (quote b) (quote (b c d)))
 ;;(insertL (quote a) (quote d) (quote (b c d)))
 
-;; subst
-;; Return the list of atoms, lat, with new having replaced the first occurrence
-;; of old
+;;
+;; (subst new old lat)
+;;
+;; Given a list of atoms lat, a new atom, new, and an old atom, old,
+;; return a new list of atoms that matches lat except with new
+;; having replaced first occurrence of old
+;;
 ;; Chapter 3, p 51
+;;
 (define subst
   (lambda (new old lat)
     (cond
@@ -103,13 +138,19 @@
       ((eq? old (car lat)) (cons new (cdr lat)))
       (else
        (cons (car lat) (subst new old (cdr lat)))))))
-
 ;;(subst (quote new) (quote old) (quote (a b c old)))
 ;;(subst (quote new) (quote old) (quote (old a b c)))
 
-;; subst2
+;;
+;; (subst2 new o1 o2 lat)
+;;
+;; Given a list of atoms lat, a new atom, new, and two old atoms, o1
+;; and o2, return a new list of atoms that matches lat except with new
+;; having replaced first occurrence of either o1 or o2.
+;;
 ;; Return the list of atoms, lat, with new having replaced either the first
 ;; occurrence of o1 or o2
+;;
 ;; Chapter 3, p 52
 (define subst2
   (lambda (new o1 o2 lat)
@@ -233,8 +274,8 @@
 (define o>
   (lambda (n m)
     (cond
-      ((zero? n) false)
-      ((zero? m) true)
+      ((zero? n) #f)
+      ((zero? m) #t)
       (else
        (o> (sub1 n) (sub1 m))))))
 
@@ -247,8 +288,8 @@
 (define o<
   (lambda (n m)
     (cond
-      ((zero? m) false)
-      ((zero? n) true)
+      ((zero? m) #f)
+      ((zero? n) #t)
       (else
        (o< (sub1 n) (sub1 m))))))
 ;;(o< 3 2)
@@ -260,10 +301,10 @@
 (define o=
   (lambda (n m)
     (cond
-      ((o> n m) false)
-      ((o< n m) false)
+      ((o> n m) #f)
+      ((o< n m) #f)
       (else
-       true))))
+       #t))))
 
 ;;(o= 1 2)
 ;;(o= 2 2)
@@ -319,7 +360,7 @@
   (lambda (n lat)
     (cond
      ((zero? (sub1 n)) (cdr lat))
-     (else
+n     (else
       (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
 
 ;;(rempick 1 (quote (a b c d)))
@@ -442,3 +483,46 @@
 ;;(rempick 2 (quote (a b c d)))
 ;;(rempick 3 (quote (a b c d)))
 ;;(rempick 4 (quote (a b c d)))
+
+;; (rember* a l)
+;;Chapter 5, p. 81
+(define rember*
+  (lambda (a l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l))
+      (cond
+       ((eqan? a (car l)) (rember* a (cdr l)))
+       (else
+        (cons (car l) (rember* a (cdr l))))))
+     (cons (rember* a (car l)) (rember* a (cdr l))))))
+
+(rember* (quote a) (quote (a b c (a b))))
+(rember* (quote a) (quote (b a b)))
+;; (insertR* new old l)
+;; Chapter 5, p. 82
+
+;; (occur* a l)
+;; Chapter 5, p. 85
+;; 
+;; (subst* new old l)
+;; Chapter 5, p. 85
+
+;; (insertL* new old l)
+;; Chapter 5, p. 86
+
+;; (member* a l)
+;; Chapter 5, p. 87
+
+;; (leftmost* l)
+;; Chapter 5, p. 88
+
+;; (eqlist? l1 l2)
+;; use eqan?
+;; Chapter 5, p. 92
+
+;; (equal? s1 s2)
+;; Chapter 5, p. 92
+
+;; (rember s l)
+;; Chapter 5, p. 94
