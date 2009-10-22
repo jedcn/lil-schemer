@@ -2,6 +2,10 @@
 ;;
 ;; Reading the book, following along with emacs, mzscheme, and Ubuntu.
 
+;; run-scheme
+;; C-x C-e Send last sexpr to Scheme
+;; C-c C-r Send region
+
 ;;
 ;; (atom? sexp)
 ;;
@@ -495,10 +499,14 @@ n     (else
        ((eqan? a (car l)) (rember* a (cdr l)))
        (else
         (cons (car l) (rember* a (cdr l))))))
-     (cons (rember* a (car l)) (rember* a (cdr l))))))
+     (else
+      (cons (rember* a (car l)) (rember* a (cdr l)))))))
 
-(rember* (quote a) (quote (a b c (a b))))
-(rember* (quote a) (quote (b a b)))
+;;(rember* (quote a) (quote ((a b) (a b))))
+;;(rember* (quote a) (quote ((a b))))
+;;(rember* (quote a) (quote (a b c (a b))))
+;;(rember* (quote a) (quote (b a b)))
+
 ;; (insertR* new old l)
 ;; Chapter 5, p. 82
 
