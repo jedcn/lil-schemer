@@ -509,6 +509,25 @@ n     (else
 
 ;; (insertR* new old l)
 ;; Chapter 5, p. 82
+(define insertR*
+  (lambda (new old l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l))
+      (cond
+       ((eqan? old (car l))
+        (cons old (cons new (insertR* new old (cdr l)))))
+       (else
+        (cons (car l) (insertR* new old (cdr l))))))
+     (else
+      (cons (insertR* new old (car l)) (insertR* new old (cdr l)))))))
+
+;;(insertR* (quote new) (quote old) (quote (a b)))
+;;(insertR* (quote new) (quote old) (quote (a b old)))
+;;(insertR* (quote new) (quote old) (quote (old a old b old)))
+;;(insertR* (quote new) (quote old) (quote ((old a b))))
+;;(insertR* (quote new) (quote old) (quote (a b c (old a b))))
+;;(insertR* (quote new) (quote old) (quote (old b (a old) b (a old b))))
 
 ;; (occur* a l)
 ;; Chapter 5, p. 85
