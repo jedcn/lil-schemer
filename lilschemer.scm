@@ -531,7 +531,22 @@ n     (else
 
 ;; (occur* a l)
 ;; Chapter 5, p. 85
-;; 
+(define occur*
+  (lambda (a l)
+    (cond
+     ((null? l) 0)
+     ((atom? (car l))
+      (cond
+       ((eqan? a (car l)) (add1 (occur* a (cdr l))))
+       (else (occur* a (cdr l)))))
+      (else
+       (o+ (occur* a (car l)) (occur* a (cdr l)))))))
+
+;;(occur* (quote a) (quote ()))
+;;(occur* (quote a) (quote (a b c d)))
+;;(occur* (quote a) (quote (a b a c d)))
+;;(occur* (quote a) (quote (a b a (c a (a a) d))))
+
 ;; (subst* new old l)
 ;; Chapter 5, p. 85
 
