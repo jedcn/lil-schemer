@@ -1,3 +1,6 @@
+;; The first three lines of this file were inserted by DrScheme. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-advanced-reader.ss" "lang")((modname lilschemer) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f ())))
 ;; The Little Schemer
 ;;
 ;; Reading the book, following along with emacs, mzscheme, and Ubuntu.
@@ -364,7 +367,7 @@
   (lambda (n lat)
     (cond
      ((zero? (sub1 n)) (cdr lat))
-n     (else
+     (else
       (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
 
 ;;(rempick 1 (quote (a b c d)))
@@ -469,24 +472,24 @@ n     (else
 ;;(one? 1)
 ;;(one? 2)
 
-;; (rempick n lat)
+;; (rempick-again n lat)
 ;;
-;; rempick, but using one?
+;; rempick-again, but using one?
 ;;
 ;; Chapter 4, p. 79
 ;;
-(define rempick
+(define rempick-again
   (lambda (n lat)
     (cond
      ((null? lat) (quote ()))
      ((one? n) (cdr lat))
      (else
-      (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+      (cons (car lat) (rempick-again (sub1 n) (cdr lat)))))))
 
-;;(rempick 1 (quote (a b c d)))
-;;(rempick 2 (quote (a b c d)))
-;;(rempick 3 (quote (a b c d)))
-;;(rempick 4 (quote (a b c d)))
+;;(rempick-again 1 (quote (a b c d)))
+;;(rempick-again 2 (quote (a b c d)))
+;;(rempick-again 3 (quote (a b c d)))
+;;(rempick-again 4 (quote (a b c d)))
 
 ;; (rember* a l)
 ;;Chapter 5, p. 81
