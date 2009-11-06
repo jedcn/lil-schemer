@@ -409,9 +409,9 @@
      (else
       (all-nums (cdr lat))))))
 
-(all-nums (quote (a 1 b 2 c 3 d 4 e 5)))
-(all-nums (quote (a b c d e)))
-(all-nums (quote (1 2 3 4 5)))
+;;(all-nums (quote (a 1 b 2 c 3 d 4 e 5)))
+;;(all-nums (quote (a b c d e)))
+;;(all-nums (quote (1 2 3 4 5)))
 
 ;; (eqan? a1 a2)
 ;;
@@ -458,6 +458,8 @@
 ;; (one? n)
 ;;
 ;; Returns #t if n is the number 1
+;;
+;; (has seemingly redundant zero? check because we don't consider negative numbers)
 ;;
 ;; Chapter 4, p. 79
 ;;
@@ -541,7 +543,8 @@
      ((atom? (car l))
       (cond
        ((eqan? a (car l)) (add1 (occur* a (cdr l))))
-       (else (occur* a (cdr l)))))
+       (else
+        (occur* a (cdr l)))))
       (else
        (o+ (occur* a (car l)) (occur* a (cdr l)))))))
 
@@ -552,7 +555,22 @@
 
 ;; (subst* new old l)
 ;; Chapter 5, p. 85
-
+(define subst*
+  (lambda (new old l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l))
+      (cond
+       ((eqan? old (car l)) (cons new (subst* new old (cdr l))))
+       (else
+        (cons (car l) (subst* new old (cdr l))))))
+     (else
+      (cons (subst* new old (car l)) (subst* new old (cdr l)))))))
+;;(subst* (quote new) (quote old) (quote ()))
+;;(subst* (quote new) (quote old) (quote (a old)))
+;;(subst* (quote new) (quote old) (quote (a old (old))))
+;;(subst* (quote new) (quote old) (quote (a b old (c old (a old) old))))
+       
 ;; (insertL* new old l)
 ;; Chapter 5, p. 86
 
