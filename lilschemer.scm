@@ -526,7 +526,6 @@
         (cons (car l) (insertR* new old (cdr l))))))
      (else
       (cons (insertR* new old (car l)) (insertR* new old (cdr l)))))))
-
 ;;(insertR* (quote new) (quote old) (quote (a b)))
 ;;(insertR* (quote new) (quote old) (quote (a b old)))
 ;;(insertR* (quote new) (quote old) (quote (old a old b old)))
@@ -547,7 +546,6 @@
         (occur* a (cdr l)))))
       (else
        (o+ (occur* a (car l)) (occur* a (cdr l)))))))
-
 ;;(occur* (quote a) (quote ()))
 ;;(occur* (quote a) (quote (a b c d)))
 ;;(occur* (quote a) (quote (a b a c d)))
@@ -573,9 +571,44 @@
        
 ;; (insertL* new old l)
 ;; Chapter 5, p. 86
+(define insertL*
+  (lambda (new old l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l))
+      (cond
+       ((eqan? old (car l))
+        (cons new (cons old (insertL* new old (cdr l)))))
+       (else
+        (cons (car l) (insertL* new old (cdr l))))))
+     (else
+      (cons (insertL* new old (car l)) (insertL* new old (cdr l)))))))
+;;(insertL* (quote new) (quote old) (quote (a b)))
+;;(insertL* (quote new) (quote old) (quote (a b old)))
+;;(insertL* (quote new) (quote old) (quote (old a old b old)))
+;;(insertL* (quote new) (quote old) (quote ((old a b))))
+;;(insertL* (quote new) (quote old) (quote (a b c (old a b))))
+;;(insertL* (quote new) (quote old) (quote (old b (a old) b (a old b))))
 
 ;; (member* a l)
 ;; Chapter 5, p. 87
+(define member*
+  (lambda (a l)
+    (cond
+     ((null? l) #f)
+     ((atom? (car l))
+      (cond
+       ((eqan? a (car l)) #t)
+       (else
+        (member* a (cdr l)))))
+     (else
+      (or (member* a (car l)) (member* a (cdr l)))))))
+;;(member* (quote c) (quote (a b)))
+;;(member* (quote c) (quote (a b c)))
+;;(member* (quote c) (quote (c a c b c)))
+;;(member* (quote c) (quote ((c a b))))
+;;(member* (quote c) (quote (a b d (c a b))))
+;;(member* (quote c) (quote (b (a b) b (a b (d)) c)))
 
 ;; (leftmost* l)
 ;; Chapter 5, p. 88
