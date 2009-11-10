@@ -597,10 +597,7 @@
     (cond
      ((null? l) #f)
      ((atom? (car l))
-      (cond
-       ((eqan? a (car l)) #t)
-       (else
-        (member* a (cdr l)))))
+       (or (eqan? a (car l)) (member* a (cdr l))))
      (else
       (or (member* a (car l)) (member* a (cdr l)))))))
 ;;(member* (quote c) (quote (a b)))
@@ -611,14 +608,56 @@
 ;;(member* (quote c) (quote (b (a b) b (a b (d)) c)))
 
 ;; (leftmost* l)
+;;
+;; Return the leftmost atom in a non-empty list, l
 ;; Chapter 5, p. 88
+(define leftmost
+  (lambda (l)
+    (cond
+      ((atom? (car l)) (car l))
+      (else
+       (leftmost (car l))))))
+;;(leftmost (quote (a b)))
+;;(leftmost (quote ((a) b)))
 
 ;; (eqlist? l1 l2)
-;; use eqan?
 ;; Chapter 5, p. 92
+(define eqlist?
+  (lambda (l1 l2)
+    (cond
+      ((and (null? l1) (null? l2)) #t)
+      ((or (null? l1) (null? l2)) #f)
+      (else
+       (and
+        (equal? (car l1) (car l2))
+        (eqlist? (cdr l1) (cdr l2)))))))
+
+;;(eqlist? (quote ()) (quote ()))
+;;(eqlist? (quote ()) (quote (a)))
+;;(eqlist? (quote (a)) (quote (a)))
+;;(eqlist? (quote (a)) (quote (b)))
+;;(eqlist? (quote (a b)) (quote (a b)))
+;;(eqlist? (quote (a (b))) (quote (a (c))))
 
 ;; (equal? s1 s2)
 ;; Chapter 5, p. 92
+(define equal
+  (lambda (s1 s2)
+    (cond
+      ((and (null? s1) (null? s2)) #t)
+      ((or (null? s1) (null? s2)) #f)
+      ((and (atom? s1) (atom? s2)) (eqan? s1 s2))
+      ((or (atom? s1) (atom? s2)) #f)
+      (else
+       (eqlist? s1 s2)))))
+;;(equal (quote ()) (quote ()))
+;;(equal (quote a) (quote a))
+;;(equal (quote a) (quote b))
+;;(equal (quote ()) (quote a))
+;;(equal (quote (a b)) (quote (a b)))
+;;(equal (quote (a b)) (quote (a b c)))
+;;(equal (quote (a b (c d) (e f) g)) (quote (a b (c d) (e f) g)))
+;;(equal (quote (a b (c d) (e f (r r)) () g)) (quote (a b (c d) (e f (r r)) () g)))
 
 ;; (rember s l)
 ;; Chapter 5, p. 94
