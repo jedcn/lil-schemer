@@ -251,17 +251,17 @@
 ;;(addtup (quote (10 15 5)))
 
 ;; Multipy n x m
-(define x
+(define ox
   (lambda (n m)
     (cond
       ((zero? m) 0)
       (else
-       (o+ n (x n (sub1 m)))))))
+       (o+ n (ox n (sub1 m)))))))
 
-;;(x 6 0)
-;;(x 6 1)
-;;(x 6 3)
-;;(x 6 10)
+;;(ox 6 0)
+;;(ox 6 1)
+;;(ox 6 3)
+;;(ox 6 10)
 
 ;; Given two tuples of equal length, generate a new tuple containing each
 ;; pair of elements added together
@@ -322,7 +322,7 @@
     (cond
       ((zero? m) 1)
       (else
-       (x n (expo n (sub1 m)))))))
+       (ox n (expo n (sub1 m)))))))
 
 ;;(expo 2 0)
 ;;(expo 2 3)
@@ -644,8 +644,6 @@
 (define equal
   (lambda (s1 s2)
     (cond
-      ((and (null? s1) (null? s2)) #t)
-      ((or (null? s1) (null? s2)) #f)
       ((and (atom? s1) (atom? s2)) (eqan? s1 s2))
       ((or (atom? s1) (atom? s2)) #f)
       (else
@@ -661,3 +659,15 @@
 
 ;; (rember s l)
 ;; Chapter 5, p. 94
+
+;; (numbered? aexp)
+;; Chapter 6, p. 99
+
+;; (value nexp)
+;; Chapter 6, p. 102
+
+;;(value (quote (1)))
+;;(value (quote (1 + 3)))
+;;(value (quote (2 ^ 3)))
+;;(value (quote (1 + (3 ^ 4))))
+;;(value (quote (1 + (3 ^ 4))))
