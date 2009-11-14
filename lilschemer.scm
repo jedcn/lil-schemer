@@ -317,16 +317,16 @@
 ;;(o= 2 2)
 
 ;; exponentiation n^m
-(define expo
+(define o^
   (lambda (n m)
     (cond
       ((zero? m) 1)
       (else
-       (ox n (expo n (sub1 m)))))))
+       (ox n (o^ n (sub1 m)))))))
 
-;;(expo 2 0)
-;;(expo 2 3)
-;;(expo 2 5)
+;;(o^ 2 0)
+;;(o^ 2 3)
+;;(o^ 2 5)
 
 ;; length
 ;; returns the number of elements in a lat
@@ -660,14 +660,71 @@
 ;; (rember s l)
 ;; Chapter 5, p. 94
 
+;;
+;; In the context of the upcoming functions, we define aexp and nexp to represent algebraic
+;; expressions containing numbers and three operators: +, -, and ^.
+;;
+;; aexp and nexp differ in pre-fix vs. post-fix notation:
+;;
+;; aexp examples:
+;; (4 + 1)
+;; ((4 + 1) ^ 3)
+;; ((4 + 1) - (5 - 2))
+;;
+;; nexp examples:
+;; (+ 4 1)
+;; (^ (+ 4 1) 3)
+;; (- (+ 4 1) (- 5 2))
+
 ;; (numbered? aexp)
 ;; Chapter 6, p. 99
+(define numbered?
+  (lambda (aexp)
+    (cond
+      ((atom? aexp) (number? aexp))
+      (else
+       (and
+        (numbered? (car aexp))
+        (numbered? (car (cdr (cdr aexp)))))))))
+;;(numbered? (quote 4))
+;;(numbered? (quote (4 + 5)))
+;;(numbered? (quote ((3 + 1) + 5)))
+;;(numbered? (quote ((3 ^ 2) + (5 - 2))))
 
-;; (value nexp)
+;; Return the first subexpression of a nexp
+(define 1st-sub
+  (lambda (aexp)
+    (car aexp)))
+;;(1st-sub (quote (4 + 5)))
+;;(1st-sub (quote ((4 ^ 3) + 5)))
+
+(define 2nd-sub
+  (lambda (aexp)
+    (car (cdr (cdr aexp)))))
+;;(2nd-sub (quote (4 + 5)))
+;;(2nd-sub (quote ((4 ^ 3) + 5)))
+;;(2nd-sub (quote ((4 ^ 3) + (5 - 2))))
+
+(define operator
+  (lambda (aexp)
+    (car (cdr aexp))))
+;;(operator (quote (4 + 5)))
+;;(operator (quote ((4 ^ 3) ^ 5)))
+;;(operator (quote ((4 ^ 3) - (5 - 2))))
+
+;; (value aexp)
 ;; Chapter 6, p. 102
-
-;;(value (quote (1)))
+(define value
+  (lambda (aexp)
+    (cond
+      ((atom? aexp) aexp)
+      ((equal? (operator aexp) (quote +)) (o+ (value (1st-sub aexp)) (value (2nd-sub aexp))))
+      ((equal? (operator aexp) (quote -)) (o- (value (1st-sub aexp)) (value (2nd-sub aexp))))
+      (else
+       (o^ (value (1st-sub aexp)) (value (2nd-sub aexp)))))))
+;;(value (quote 1))
 ;;(value (quote (1 + 3)))
+;;(value (quote (3 - 1)))
 ;;(value (quote (2 ^ 3)))
 ;;(value (quote (1 + (3 ^ 4))))
-;;(value (quote (1 + (3 ^ 4))))
+;;(value (quote ((1 + (3 ^ 4)) - 2)))
