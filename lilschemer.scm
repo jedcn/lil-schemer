@@ -47,7 +47,7 @@
   (lambda (a lat)
     (cond
       ((null? lat) #f)
-      ((eq? a (car lat)) #t)
+      ((equal? a (car lat)) #t)
       (else
        (member? a (cdr lat))))))
 ;;(member? 'a '(a b c))
@@ -67,7 +67,7 @@
   (lambda (a lat)
     (cond
       ((null? lat) (quote()))
-      ((eq? a (car lat)) (cdr lat))
+      ((equal? a (car lat)) (cdr lat))
       (else
        (cons (car lat) (rember a (cdr lat)))))))
 ;;(rember 'a '(a b c))
@@ -105,7 +105,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) (quote()))
-      ((eq? (car lat) old) (cons old (cons new (cdr lat))))
+      ((equal? (car lat) old) (cons old (cons new (cdr lat))))
       (else
        (cons (car lat) (insertR new old (cdr lat)))))))
 ;;(insertR (quote jalapeno) (quote and) (quote (tacos tamales and salsa)))
@@ -123,7 +123,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) (quote ()))
-      ((eq? (car lat) old) (cons new lat))
+      ((equal? (car lat) old) (cons new lat))
       (else
        (cons (car lat) (insertL new old (cdr lat)))))))
 ;;(insertL (quote a) (quote b) (quote (b c d)))
@@ -142,7 +142,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) (quote ()))
-      ((eq? old (car lat)) (cons new (cdr lat)))
+      ((equal? old (car lat)) (cons new (cdr lat)))
       (else
        (cons (car lat) (subst new old (cdr lat)))))))
 ;;(subst (quote new) (quote old) (quote (a b c old)))
@@ -163,7 +163,7 @@
   (lambda (new o1 o2 lat)
     (cond
       ((null? lat) (quote ()))
-      ((or (eq? (car lat) o1) (eq? (car lat) o2)) (cons new (cdr lat)))
+      ((or (equal? (car lat) o1) (equal? (car lat) o2)) (cons new (cdr lat)))
       (else
        (cons (car lat) (subst2 new o1 o2 (cdr lat)))))))
 ;;(subst2 (quote clean) (quote g1) (quote g2) (quote (a b c g2)))
@@ -175,7 +175,7 @@
   (lambda (a lat)
     (cond 
       ((null? lat) (quote ()))
-      ((eq? (car lat) a) (multirember a (cdr lat)))
+      ((equal? (car lat) a) (multirember a (cdr lat)))
       (else
        (cons (car lat) (multirember a (cdr lat)))))))
 
@@ -188,7 +188,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) (quote ()))
-      ((eq? (car lat) old) (cons old (cons new (multiinsertR new old (cdr lat)))))
+      ((equal? (car lat) old) (cons old (cons new (multiinsertR new old (cdr lat)))))
       (else
        (cons (car lat) (multiinsertR new old (cdr lat)))))))
 ;;(multiinsertR (quote z) (quote a) (quote (a a a a)))
@@ -198,7 +198,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) (quote ()))
-      ((eq? (car lat) old) (cons new (multiinsertR new old (cdr lat))))
+      ((equal? (car lat) old) (cons new (multiinsertR new old (cdr lat))))
       (else
        (cons (car lat) (multiinsertL new old (cdr lat)))))))
 ;;(multiinsertL (quote z) (quote a) (quote (a a a a)))
@@ -208,7 +208,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) (quote ()))
-      ((eq? (car lat) old) (cons new (multisubst new old (cdr lat))))
+      ((equal? (car lat) old) (cons new (multisubst new old (cdr lat))))
       (else
        (cons (car lat) (multisubst new old (cdr lat)))))))
 
@@ -728,3 +728,129 @@
 ;;(value (quote (2 ^ 3)))
 ;;(value (quote (1 + (3 ^ 4))))
 ;;(value (quote ((1 + (3 ^ 4)) - 2)))
+
+;; (set? lat)
+;; Chapter 7, pg. 111
+;;
+;; Return #t if lat does not contain any repeated elements
+(define set?
+  (lambda (lat)
+    (cond
+      ((null? lat) #t)
+      ((member? (car lat) (cdr lat)) #f)
+      (else
+       (set? (cdr lat))))))
+;;(set? (quote ()))
+;;(set? (quote (a)))
+;;(set? (quote (a a)))
+;;(set? (quote (a b c)))
+;;(set? (quote (a b c d e f g h i j k f)))
+
+;; (makeset lat)
+;; Ch 7, p 112
+;;
+;; Build a set based on lat
+(define makeset
+  (lambda (lat)
+    (cond
+      ((null? lat) (quote ()))
+      ((member? (car lat) (cdr lat)) (makeset (cdr lat)))
+      (else
+       (cons (car lat) (makeset (cdr lat)))))))
+;;(makeset (quote ()))
+;;(makeset (quote (a)))
+;;(makeset (quote (a a)))
+;;(makeset (quote (a b c)))
+;;(makeset (quote (a b c d e f g h i j k f)))
+;;(makeset (quote (a b a b a b a b a)))
+
+;; (subset? set1 set2)
+;; Ch 7, p 113
+;;
+;; Return #t if each element in set1 is in set2
+(define subset?
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) #t)
+      (else (and
+       (member? (car set1) set2)
+       (subset? (cdr set1) set2))))))
+;;(subset? (quote ()) (quote (a b)))
+;;(subset? (quote (a)) (quote (a)))
+;;(subset? (quote (a b c)) (quote (a b)))
+;;(subset? (quote (a b c d)) (quote (d a b c)))
+
+;; (eqset? set1 set2)
+;; Ch 7, p 114
+;;
+;; return #t if all of set1's elements are in set2, and if all of set2's elements are in set1
+(define eqset?
+  (lambda (set1 set2)
+    (and
+     (subset? set1 set2)
+     (subset? set2 set1))))
+;;(eqset? (quote ()) (quote (a b)))
+;;(eqset? (quote (a)) (quote (a)))
+;;(eqset? (quote (a b c)) (quote (a b)))
+;;(eqset? (quote (a b c d)) (quote (d a b c)))
+
+;; (intersect? set1 set2)
+;; Ch 7, p 115
+;;
+;; Return #t if any one of set1's elements are in set2
+(define intersect?
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) #f)
+      (else
+       (or
+        (member? (car set1) set2)
+        (intersect? (cdr set1) set2))))))
+;;(intersect? (quote ()) (quote (a b)))
+;;(intersect? (quote (a)) (quote (a)))
+;;(intersect? (quote (a b c)) (quote (d e f)))
+;;(intersect? (quote (a b c d)) (quote (d e f g)))
+
+;; (intersect set1 set)
+;; Ch 7, p 116
+;;
+;; Build the set intersection  of set1 and set2
+(define intersect
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) (quote ()))
+      ((member? (car set1) set2) (cons (car set1) (intersect (cdr set1) set2)))
+      (else
+       (intersect (cdr set1) set2)))))
+;;(intersect (quote ()) (quote (a b)))
+;;(intersect (quote (a)) (quote (a)))
+;;(intersect (quote (a b c)) (quote (b d e f)))
+;;(intersect (quote (a b c d)) (quote (d c e f g)))
+
+;; (union set1 set)
+;; Ch 7, p 116
+;;
+;; Build the set union  of set1 and set2
+(define union
+  (lambda (set1 set2)
+    (cond
+      ((null? set1) set2)
+      ((member? (car set1) set2) (union (cdr set1) set2))
+      (else
+       (cons (car set1) (union (cdr set1) set2))))))
+;;(union (quote ()) (quote (a b)))
+;;(union (quote (a)) (quote (a)))
+;;(union (quote (a b c)) (quote (b d e f)))
+;;(union (quote (a b c d)) (quote (d c e f g)))
+
+;; (intersectall l-set)
+;; Ch 7, p 116
+;;
+;; Given a non-empty list of sets, build the set intersection of them all
+(define intersect-all
+  (lambda (l-set)
+    (cond
+      ((null? (cdr l-set)) (car l-set))
+      (else
+       (intersect (car l-set) (intersect-all (cdr l-set)))))))
+(intersect-all (quote ((a b c) (a b c d e f) (b c f g))))
