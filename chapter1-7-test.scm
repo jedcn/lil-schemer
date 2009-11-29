@@ -1,6 +1,3 @@
-;; The first three lines of this file were inserted by DrScheme. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-advanced-reader.ss" "lang")((modname chapter1-7-test) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f ())))
 (require scheme/include)
 (include "chapter1-7.scm")
 
@@ -169,3 +166,32 @@
 (union (quote (a b c d)) (quote (d c e f g)))
 
 (intersect-all (quote ((a b c) (a b c d e f) (b c f g))))
+
+(a-pair? (quote ()))
+(a-pair? (quote (a)))
+(a-pair? (quote (a b c)))
+(a-pair? (quote (a b)))
+(a-pair? (quote ((a) (b))))
+(a-pair? (quote (a (b))))
+(a-pair? (quote ((a) b)))
+
+(build 'a 'b)
+(build (quote (a b c)) (quote (1 2 3)))
+
+(fun? (quote ((4 3) (4 2) (7 6) (6 2) (3 4))))
+(fun? (quote ((8 3) (4 2) (7 6) (6 2) (3 4))))
+(fun? (quote ((d 4) (b 0) (b 9) (e 5) (g 4))))
+
+(revrel-1 (quote ((4 3) (4 2) (7 6) (6 2) (3 4))))
+(revrel-1 (quote ((8 3) (4 2) (7 6) (6 2) (3 4))))
+(revrel-1 (quote ((d 4) (b 0) (b 9) (e 5) (g 4))))
+
+(revrel-2 (quote ((4 3) (4 2) (7 6) (6 2) (3 4))))
+(revrel-2 (quote ((8 3) (4 2) (7 6) (6 2) (3 4))))
+(revrel-2 (quote ((d 4) (b 0) (b 9) (e 5) (g 4))))
+
+(fullfun? (quote ((8 3) (4 2) (7 6) (6 2) (3 4))))
+(fullfun? (quote ((8 3) (4 8) (7 6) (6 2) (3 4))))
+(fullfun? (quote ((grape raisin) (plum prune) (stewed grape))))
+
+

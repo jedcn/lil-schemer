@@ -1,6 +1,3 @@
-;; The first three lines of this file were inserted by DrScheme. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-advanced-reader.ss" "lang")((modname chapter1-7) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f ())))
 ;; The Little Schemer
 ;;
 ;; Reading the book, following along with emacs, drscheme, and Ubuntu.
@@ -708,3 +705,84 @@
       ((null? (cdr l-set)) (car l-set))
       (else
        (intersect (car l-set) (intersect-all (cdr l-set)))))))
+
+;; (a-pair? x)
+;; Chapter 7, pg. 118
+;; 
+;; Given any S-exp, return #t only if it contains two S-exps.
+(define a-pair?
+  (lambda (x)
+    (cond
+      ((atom? x) #f)
+      ((null? x) #f)
+      ((null? (cdr x)) #f)
+      ((null? (cdr (cdr x))) #t)
+       (else #f))))
+
+;;
+;; Note: first and second, as defined on page 119 in Chapter 7 are built in.
+;;
+
+;; (build s1 s2)
+;; Chapter 7, pg. 119
+;;
+;; Given two S-exp, create a pair with them.
+(define build
+  (lambda (s1 s2)
+    (cons s1
+          (cons s2 
+                (quote ())))))
+
+;; (fun? rel)
+;; Chapter 7, pg. 120
+;;
+;; Determine whether a relation, rel, is a function.
+(define fun?
+  (lambda (rel)
+    (set?
+     (firsts rel))))
+
+;; (revrel-1 rel)
+;; Chapter 7, pg. 120
+;;
+;; Reverse each pair in a relation
+(define revrel-1
+  (lambda (rel)
+    (cond
+      ((null? rel) (quote ()))
+      (else
+       (cons
+        (build (second (car rel)) (first (car rel)))
+        (revrel-1 (cdr rel)))))))
+
+;; (revpair pair)
+;; Chapter 7, pg. 121
+;;
+;; Reverse a pair
+(define revpair
+  (lambda (pair)
+    (build (second pair) (first pair))))
+
+;; (revrel-2 rel)
+;; Chapter 7, pg. 120
+;;
+;; Reverse each pair in a relation using revpair
+(define revrel-2
+  (lambda (rel)
+    (cond
+      ((null? rel) (quote ()))
+      (else
+       (cons
+        (revpair (car rel))
+        (revrel-2 (cdr rel)))))))
+
+(define revrel revrel-2)
+
+;; (fullfun? fun)
+;; Chapter 7, pg. 122
+;;
+;; Assuming fun is fun?, return #t if the second item in each pair of fun occurs only once.
+(define fullfun?
+  (lambda (fun)
+    (fun? (revrel fun))))
+(define one-to-one? fullfun?)
